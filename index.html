@@ -2,9 +2,45 @@
 <html>
   <head>
     <title>This is the title of the webpage!</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.14.2/dist/algoliasearch-lite.umd.js" integrity="sha256-aWejf9fvNnbIE3aZOzplg9y303hHjm4pdcT8aC7esdU=" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.44/dist/instantsearch.production.min.js" integrity="sha256-qS7lCmzEsVAkea4ZvZmtHQpNYg/yElYL1wTBXE1x/QE=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.4.5/themes/reset-min.css" integrity="sha256-QlHlZdbSVxaYkUHxhMFhAj/L3pJiW1LuomSCONXBWms=" crossorigin="anonymous">
+
+    <script type="text/javascript">
+      const searchClient = algoliasearch('QY844ARKOF', '0e388aa2e74e57fad8cf0d7636a453dd');
+
+      const search = instantsearch({
+        indexName: 'COLECT_B2B_01',
+        searchClient,
+      });
+
+      search.addWidgets([
+        instantsearch.widgets.searchBox({
+          container: '#searchbox',
+        }),
+
+        instantsearch.widgets.hits({
+          container: '#hits',
+        })
+      ]);
+
+      search.start();
+
+    </script>
+
+
   </head>
   <body>
     <p>This is the website for a POC integrating Algolio with <a href="https://www.colect.io">Colect</a></p>
     <p><strong>More to come here soon</strong></p>
+    <br>
+    <div id="searchbox"></div>
+    <br>
+    <div id="hits"></div>
+
+
   </body>
 </html>
