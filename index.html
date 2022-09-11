@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <title>Algolia Search - Colect POC</title>
 
@@ -7,7 +7,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.44/dist/instantsearch.production.min.js"></script>
 
-    
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"
+    />
 
   </head>
   <body>
@@ -33,14 +36,26 @@
 
         instantsearch.widgets.hits({
           container: '#hits',
+          templates: {
+          item: `
+            <div>
+              <img src="{{image}}" align="left" alt="{{name}}" />
+              <div class="hit-name">
+                {{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}
+              </div>
+              <div class="hit-description">
+                {{#helpers.highlight}}{ "attribute": "description" }{{/helpers.highlight}}
+              </div>
+              <div class="hit-price">\${{price}}</div>
+            </div>
+          `,
+        },
         })
       ]);
 
       search.start();
 
     </script>
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.4.5/themes/reset-min.css">
 
 
   </body>
