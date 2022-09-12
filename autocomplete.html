@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Algolia autocomplete Search - Colect POC</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
+    <script>
+      const { autocomplete } = window['@algolia/autocomplete-js'];
+    </script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-theme-classic"
+    />
+
+
+  </head>
+  <body>
+    <p>POC for autocomplete search</p>
+
+    <br>
+    <div id="autocomplete"></div>
+
+
+    <script type="text/javascript">
+      import { autocomplete } from '@algolia/autocomplete-js';
+
+      import '@algolia/autocomplete-theme-classic';
+
+      autocomplete({
+        container: '#autocomplete',
+        placeholder: 'Search for products',
+        getSources() {
+          return [];
+        },
+      });
+
+
+    </script>
+
+
+  </body>
+</html>
