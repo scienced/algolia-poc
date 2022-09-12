@@ -3,6 +3,10 @@
   <head>
     <title>Algolia autocomplete Search - Colect POC</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
+    <script>
+      const { autocomplete, getAlgoliaResults } = window['@algolia/autocomplete-js'];
+    </script>
 
 
     <link
@@ -23,8 +27,6 @@
 
   // default version
   import algoliasearch from 'https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch.esm.browser.js';
-
-  import { autocomplete, getAlgoliaResults } from 'https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js';
 
 
 const searchClient = algoliasearch('QY844ARKOF', '0e388aa2e74e57fad8cf0d7636a453dd');
