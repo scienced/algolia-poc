@@ -5,7 +5,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
     <script>
-      const { autocomplete } = window['@algolia/autocomplete-js'];
+      const { autocomplete, getAlgoliaResults } = window['@algolia/autocomplete-js'];
     </script>
 
     <link
@@ -24,13 +24,35 @@
 
     <script type="text/javascript">
 
-      autocomplete({
-        container: '#autocomplete',
-        placeholder: 'Search for products',
-        getSources() {
-          return [];
+
+const searchClient = algoliasearch('QY844ARKOF', '0e388aa2e74e57fad8cf0d7636a453dd');
+
+autocomplete({
+  container: '#autocomplete',
+  placeholder: 'Search for products',
+  getSources({ query }) {
+    return [
+      {
+        sourceId: 'products',
+        getItems() {
+          return getAlgoliaResults({
+            searchClient,
+            queries: [
+              {
+                indexName: 'instant_search',
+                query,
+                params: {
+                  hitsPerPage: 5,
+                },
+              },
+            ],
+          });
         },
-      });
+        // ...
+      },
+    ];
+  },
+});
 
 
     </script>
