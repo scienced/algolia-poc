@@ -41,9 +41,9 @@
           item: `
             <a href="{{link}}">
             <div>
-              <img src="{{image_link}}" align="left" style="max-height: 200px; max-width: 200px;">
+              <img src="{{image_link}}?w=140" align="left" style="max-width: 200px;">
               <div class="hit-name">
-                {{#helpers.highlight}}{{title}{{/helpers.highlight}}
+                {{#helpers.highlight}} {{title}} {{/helpers.highlight}}
                 {{description}}
               </div>
               <br>
