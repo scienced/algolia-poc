@@ -39,14 +39,17 @@
           container: '#hits',
           templates: {
           item: `
-            <a href="https://b2b.colect.io/webstore/v2/product/COLECT_B2B_01/{{objectID}}">
+            <a href="{{link}}">
             <div>
-              <img src="{{image}}" align="left" alt="{{name}}" />
+              <img src="{{image_link}}" align="left" />
               <div class="hit-name">
-                {{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}
+                {{#helpers.highlight}}{ "attribute": "title" }{{/helpers.highlight}}
+                {{description}}
               </div>
               <br>
               <div class="hit-price">EUR {{price}}</div>
+              <br>
+              <div class="">{{categories}}</div>
             </div>
             </a>
           `,
