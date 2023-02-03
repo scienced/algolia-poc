@@ -5,51 +5,184 @@
 
     <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.14.2/dist/algoliasearch-lite.umd.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.44/dist/instantsearch.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.46/dist/instantsearch.production.min.js"></script>
+
+    <script>
+      var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights@2.2.3/dist/search-insights.min.js";
+
+      !function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){
+      (e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],
+      i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
+      }(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
+    </script>
+
 
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"
     />
 
+   <style type="text/css">
+     /* The Modal (background) */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content/Box */
+      .modal-content {
+        background-color: #fefefe;
+        margin: 30px auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        border-radius: 10px;
+        width: 93%; /* Could be more or less, depending on screen size */
+      }
+
+      /* The Close Button */
+      .close {
+        position: absolute;
+        right: 32px;
+        top: 32px;
+        width: 32px;
+        height: 32px;
+        opacity: 0.3;
+      }
+      .close:hover {
+        opacity: 1;
+      }
+      .close:before, .close:after {
+        position: absolute;
+        left: 15px;
+        content: ' ';
+        height: 33px;
+        width: 2px;
+        background-color: #333;
+      }
+      .close:before {
+        transform: rotate(45deg);
+      }
+      .close:after {
+        transform: rotate(-45deg);
+      }
+
+        /* product card design */
+        .card {
+          max-width: 300px;
+          margin: auto;
+          text-align: center;
+          font-family: arial;
+        }
+
+        .price  {
+          color: grey;
+          font-weight: 100;
+            font-size: 16px;
+        }
+
+        a {
+          text-decoration: none;
+        }
+
+        h1 {
+          font-weight: 600;
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0;
+            color: black;
+        }
+
+        /* override some algolia css */
+        .ais-Hits-item, .ais-InfiniteHits-item, .ais-InfiniteResults-item, .ais-Results-item {
+          margin-top: 1rem;
+          margin-left: 1rem;
+          padding: 1rem;
+          width: calc(20% - 1rem);
+          border: 1px solid #c4c8d8;
+          box-shadow: 0 2px 5px 0 #e3e5ec;
+      }
+
+     
+
+
+   </style> 
+
   </head>
   <body>
-    <p>This is the page for a POC integrating Algolio with <a href="https://www.colect.io">Colect</a></p>
-    <p>1. The search below is based on the <strong>instantsearch.js</strong> library</p>
-    <!--<p>2. The search experience based on the <strong>autocomplete.js</strong> library can be found <a href="/autocomplete.html">here.</a>WORK IN PROGRESS</p>-->
+    <button id="myBtn">Open search modal</button>
+
+    <p>1. The search modal is based on the <strong>instantsearch.js</strong> library</p>
+    <p>2. The search suggestions is based on the <strong>autocomplete.js</strong> library</p>
+  </body>
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="close"></div>
     <br>
+
     <div id="searchbox"></div>
     <br>
+     <div id="stats"></div>
+     <br>
     <div id="hits"></div>
 
+  </div>
+
+</div>
+
+
+
+
     <script type="text/javascript">
-      const searchClient = algoliasearch('A888NZ7TE0', '48975afa6e88a25c3cea201ea5f60cdd');
+      const searchClient = algoliasearch('E8HZJUFDQU', '2eab4588c570c21e4ef0e93c7483c45a');
 
       const search = instantsearch({
-        indexName: 'Test Colection',
+        indexName: 'PL_TriumphTEST',
         searchClient,
+        routing: true,
       });
+
 
       search.addWidgets([
         instantsearch.widgets.searchBox({
           container: '#searchbox',
+
         }),
+
+        instantsearch.widgets.stats({
+          container: '#stats',
+  
+        }),
+
 
         instantsearch.widgets.hits({
           container: '#hits',
           templates: {
-          item: `
-            <a href="{{link}}">
-            <div>
-              <img src="{{image_link}}?w=140" align="left" style="max-width: 200px;">
-              <div class="hit-name">
-             
-                {{description}}
-              </div>
-              <br>
-              <div class="hit-price">EUR {{price}}</div>
-              <br>
-              <div class="">{{categories}}</div>
+          item: (hit, bindEvent) =>  `
+            <a href="${hit.link}" ${bindEvent('click', hit, 'pdp clicked')}>
+            <div class="card">
+              <img src="${hit.image_link}" style="width: 100%; max-height: 300px">
+          
+             <h1>${hit._highlightResult.title.value}</h1>
+              
+              <p class="price">${hit.objectID} - ${hit.colorCode}</p>
+              <span class="label">${hit.productGroupCode}</span>
+              
+
+   
+
             </div>
             </a>
           `,
@@ -57,10 +190,43 @@
         })
       ]);
 
+      search.use(instantsearch.middlewares.createInsightsMiddleware({
+        insightsClient: window.aa,
+      }));
+      window.aa('setUserToken', 'my-user-token');
+
+
       search.start();
 
     </script>
 
+    <script type="text/javascript">
+      // Get the modal
+var modal = document.getElementById("myModal");
 
-  </body>
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+    </script>
+
+
 </html>
