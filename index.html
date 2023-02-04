@@ -114,7 +114,35 @@
         background-color: #e8033530;
       }
 
-     
+     .ais-QueryRuleCustomData {
+       max-height: 300px;
+    overflow: hidden;
+    /* width: 100%; */
+    margin-bottom: 1rem;
+     }
+
+    .ais-QueryRuleCustomData img {
+    width: 100%;
+    } 
+
+
+    /* SIDE BAR CSS */
+    .with-sidebar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1);
+}
+
+.with-sidebar > :first-child {
+  flex-grow: 1;
+}
+
+.with-sidebar > :last-child {
+  flex-basis: 0;
+  flex-grow: 999;
+  min-inline-size: 50%;
+}
+  
 
 
    </style> 
@@ -124,7 +152,19 @@
     <button id="myBtn">Open search modal</button>
 
     <p>1. The search modal is based on the <strong>instantsearch.js</strong> library</p>
-    <p>2. The search suggestions is based on the <strong>autocomplete.js</strong> library</p>
+
+    This search supports:
+    <ul>
+      <li>Algolia Insights, sending view/click and conversion events</li>
+      <li>Routing</li>
+      <li>Facets</li>
+      <li>Full size modal</li>
+      <li>Banner support</li>
+      
+
+
+     </ul> 
+ 
   </body>
 
 
@@ -136,25 +176,33 @@
     <div class="close"></div>
     <br>
 
-    <div id="searchbox"></div>
-    <br>
-     <div id="stats"></div>
-     
-     <div class="left-panel">
+<div id="searchbox"></div>
+<br>
 
-      <h2>Product Line</h2>
+
+<div class="with-sidebar">
+  <div><!-- sidebar -->
+
+     <div id="stats"></div>
+     <h3>Product Line</h3>
         <div id="categories-list"></div>
 
-        <h2>Status</h2>
+        <h3>Status</h3>
         <div id="status-list"></div>
 
-        <h2>Lifecycle</h2>
+        <h3>Lifecycle</h3>
         <div id="lifecycle-list"></div>
-
       </div>
-
-    <div id="banner"></div>
+    <div><!-- non-sidebar -->
+       <div id="banner"></div>
     <div id="hits"></div>
+    </div>
+  </div>
+     
+     
+     
+
+   
 
   </div>
 
@@ -185,16 +233,18 @@
         }),
 
         instantsearch.widgets.queryRuleCustomData({
-    container: '#banner',
-    templates: {
-      default: `
-        {{#items}}
-          <img src={{banner_image}} />
-          <h2>{{banner_text}}</h2>
-        {{/items}}
-      `,
-    },
-  }),
+          container: '#banner',
+          templates: {
+            default: `
+              {{#items}}
+                <a href="{{link}}">
+                <img src={{banner_image}} />
+                <h2>{{banner_text}}</h2>
+                </a>
+              {{/items}}
+            `,
+          },
+        }),
 
 
         instantsearch.widgets.hits({
