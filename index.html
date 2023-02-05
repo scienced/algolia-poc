@@ -160,7 +160,7 @@
       <li>Facets</li>
       <li>Full size modal</li>
       <li>Banner support</li>
-      
+
 
 
      </ul> 
@@ -192,6 +192,8 @@
 
         <h3>Lifecycle</h3>
         <div id="lifecycle-list"></div>
+        <br>
+        <div id="clear-refinements"></div>
       </div>
     <div><!-- non-sidebar -->
        <div id="banner"></div>
@@ -282,6 +284,11 @@
           container: '#categories-list',
           attribute: 'categories',
         }),
+
+        instantsearch.widgets.clearRefinements({
+          container: '#clear-refinements',
+        }),
+
 
 
 
