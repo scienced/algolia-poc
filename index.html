@@ -115,7 +115,7 @@
       }
 
      .ais-QueryRuleCustomData {
-       max-height: 300px;
+       max-height: 343px;
     overflow: hidden;
     /* width: 100%; */
     margin-bottom: 1rem;
@@ -148,7 +148,7 @@
    </style> 
 
   </head>
-  <body>
+  <body onload="checkparas()">
     <button id="myBtn">Open search modal</button>
 
     <p>1. The search modal is based on the <strong>instantsearch.js</strong> library</p>
@@ -187,11 +187,18 @@
      <h3>Product Line</h3>
         <div id="categories-list"></div>
 
+         <h3>Series</h3>
+        <div id="series-list"></div>
+
         <h3>Status</h3>
         <div id="status-list"></div>
 
         <h3>Lifecycle</h3>
         <div id="lifecycle-list"></div>
+
+        <h3>Color</h3>
+        <div id="color-list"></div>
+
         <br>
         <div id="clear-refinements"></div>
       </div>
@@ -284,6 +291,14 @@
           container: '#categories-list',
           attribute: 'categories',
         }),
+        instantsearch.widgets.refinementList({
+          container: '#series-list',
+          attribute: 'userDefinedField2',
+        }),
+         instantsearch.widgets.refinementList({
+          container: '#color-list',
+          attribute: 'simpleColor',
+        }),
 
         instantsearch.widgets.clearRefinements({
           container: '#clear-refinements',
@@ -305,6 +320,21 @@
     </script>
 
     <script type="text/javascript">
+
+      function checkparas() {
+        console.log("ah yeah")
+        const queryString = window.location.seaech
+        const urlParams = new URLSearchParams(queryString)
+        const searchQuery = urlParams.get('PL_TriumphTEST[query]')
+        console.log (searchQuery)
+
+        
+         modal.style.display = "block";
+        
+
+      } 
+
+
       // Get the modal
 var modal = document.getElementById("myModal");
 
@@ -322,6 +352,7 @@ btn.onclick = function() {
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
   modal.style.display = "none";
+
 
 }
 
