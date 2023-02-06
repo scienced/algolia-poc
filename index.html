@@ -7,6 +7,24 @@
 
     <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.46/dist/instantsearch.production.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
+    <script>
+      const { autocomplete, getAlgoliaResults } = window['@algolia/autocomplete-js'];
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-query-suggestions"></script>
+<script>
+  const { createQuerySuggestionsPlugin } = window[
+    '@algolia/autocomplete-plugin-query-suggestions'
+  ];
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-recent-searches"></script>
+<script>
+  const { createLocalStorageRecentSearchesPlugin } = window[
+    '@algolia/autocomplete-plugin-recent-searches'
+  ];
+</script>
+
+
     <script>
       var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights@2.2.3/dist/search-insights.min.js";
 
@@ -16,18 +34,29 @@
       }(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
     </script>
 
+    <script type="text/javascript">
+      const { history } = instantsearch.routers;
+      const { connectSearchBox } = instantsearch.connectors;
 
+    </script>
+
+    <link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-theme-classic"
+/>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"
     />
+
+
 
    <style type="text/css">
      /* The Modal (background) */
       .modal {
         display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
+        /* z-index: 1; */
         left: 0;
         top: 0;
         width: 100%; /* Full width */
@@ -151,7 +180,7 @@
   <body onload="checkparas()">
     <button id="myBtn">Open search modal</button>
 
-    <p>1. The search modal is based on the <strong>instantsearch.js</strong> library</p>
+    <p>1. The search modal is based on the <strong>instantsearch.js</strong>  and <strong>autocomplete.js</strong> library</p>
 
     This search currently supports:
     <ul>
@@ -160,17 +189,15 @@
       <li>Facets</li>
       <li>Full size modal</li>
       <li>Banner support, see: <a href="?PL_TriumphTEST%5Bquery%5D=amour">example</a></li>
+      <li>Suggestions via autocomplete.js libary</li>
+      <li>Historic searches via autocomplete.js libary</li>
+
     </ul>
 
     Pending features:
     <ul>
       <li>No results screen (pending)</li>
       <li>Facets show more</li>
-      <li>Integrate autocomplete.js library. See standalone <a href="auto.html">here</a></li>
-       <li>Suggestions</li>
-      <li>Search in categrories</li>
-      <li>Historic searches</li>
-      <li>no search result suggestions</li>
       <li>Clean up code</li>
     </ul>
 
@@ -191,6 +218,9 @@
 
 <div id="searchbox"></div>
 <br>
+ <div id="autocomplete" style="    max-width: 650px;
+    margin: auto; margin-bottom: 1rem;"></div>
+
 
 
 <div class="with-sidebar">
@@ -235,6 +265,9 @@
 
     <script type="text/javascript">
       const searchClient = algoliasearch('E8HZJUFDQU', '2eab4588c570c21e4ef0e93c7483c45a');
+      
+      const INSTANT_SEARCH_INDEX_NAME = 'PL_TriumphTEST';
+      const instantSearchRouter = history();
 
       const search = instantsearch({
         indexName: 'PL_TriumphTEST',
@@ -242,12 +275,11 @@
         routing: true,
       });
 
+      const virtualSearchBox = connectSearchBox(() => {});
+
 
       search.addWidgets([
-        instantsearch.widgets.searchBox({
-          container: '#searchbox',
-
-        }),
+        virtualSearchBox({}),
 
         instantsearch.widgets.stats({
           container: '#stats',
@@ -266,6 +298,10 @@
             `,
           },
         }),
+
+
+
+
 
 
         instantsearch.widgets.hits({
@@ -329,9 +365,83 @@
 
       search.start();
 
+      // Set the InstantSearch index UI state from external events.
+      function setInstantSearchUiState(indexUiState) {
+        search.setUiState(uiState => ({
+          ...uiState,
+          [INSTANT_SEARCH_INDEX_NAME]: {
+            ...uiState[INSTANT_SEARCH_INDEX_NAME],
+            // We reset the page when the search state changes.
+            page: 1,
+            ...indexUiState,
+          },
+        }));
+      }
+
+      // Return the InstantSearch index UI state.
+      function getInstantSearchUiState() {
+        const uiState = instantSearchRouter.read();
+
+        return (uiState && uiState[INSTANT_SEARCH_INDEX_NAME]) || {};
+      }
+
+      const searchPageState = getInstantSearchUiState();
+
+      let skipInstantSearchUiStateUpdate = false;
+
+       const querySuggestionsPlugin = createQuerySuggestionsPlugin({
+        searchClient,
+        indexName: 'PL_TriumphTEST_query_suggestions',
+        getSearchParams({ state }) {
+         return { hitsPerPage: state.query ? 5 : 5 };
+        },
+      });
+
+      const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
+        key: 'RECENT_SEARCH',
+        limit: 5,
+      });
+
+
+      const { setQuery } = autocomplete({
+        container: '#autocomplete',
+        placeholder: 'Search for products',
+        plugins: [querySuggestionsPlugin, recentSearchesPlugin],
+        openOnFocus: true,
+        detachedMediaQuery: 'none',
+        initialState: {
+          query: searchPageState.query || '',
+        },
+        onSubmit({ state }) {
+          setInstantSearchUiState({ query: state.query });
+        },
+        onReset() {
+          setInstantSearchUiState({ query: '' });
+        },
+        onStateChange({ prevState, state }) {
+          if (!skipInstantSearchUiStateUpdate && prevState.query !== state.query) {
+            setInstantSearchUiState({ query: state.query });
+          }
+          skipInstantSearchUiStateUpdate = false;
+        },
+      })
+
+      // This keeps Autocomplete aware of state changes coming from routing
+      // and updates its query accordingly
+      window.addEventListener('popstate', () => {
+        skipInstantSearchUiStateUpdate = true;
+        setQuery(search.helper?.state.query || '');
+      });
+
+
+
+
+
+
     </script>
 
     <script type="text/javascript">
+
 
       // Check if router has search query parameter, if so open model
       function checkparas() {
