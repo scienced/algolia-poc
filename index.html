@@ -321,17 +321,14 @@
 
     <script type="text/javascript">
 
+      // Check if router has search query parameter, if so open model
       function checkparas() {
-        console.log("ah yeah")
-        const queryString = window.location.seaech
+        const queryString = window.location.search
         const urlParams = new URLSearchParams(queryString)
-        const searchQuery = urlParams.get('PL_TriumphTEST[query]')
-        console.log (searchQuery)
-
-        
+        const searchState = urlParams.has('PL_TriumphTEST[query]')
+        if (searchState) {
          modal.style.display = "block";
-        
-
+        }
       } 
 
 
