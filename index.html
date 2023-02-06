@@ -153,14 +153,21 @@
 
     <p>1. The search modal is based on the <strong>instantsearch.js</strong> library</p>
 
-    This search supports:
+    This search currently supports:
     <ul>
       <li>Algolia Insights, sending view/click and conversion events</li>
-      <li>Routing</li>
+      <li>Routing (good back from PDP experience)</li>
       <li>Facets</li>
       <li>Full size modal</li>
       <li>Banner support, see: <a href="?PL_TriumphTEST%5Bquery%5D=amour">example</a></li>
+    </ul>
+
+    Pending features:
+    <ul>
       <li>No results screen (pending)</li>
+      <li>Facets show more</li>
+      <li>Integrate autocomplete.js library. See standalone <a href="auto.html">here</a></li>
+    </ul>
 
 
 
@@ -249,7 +256,6 @@
               {{#items}}
                 <a href="{{link}}">
                 <img src={{banner_image}} />
-                <h2>{{banner_text}}</h2>
                 </a>
               {{/items}}
             `,
