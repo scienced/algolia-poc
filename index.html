@@ -4,41 +4,34 @@
     <title>Algolia Search - Colect POC</title>
 
     <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.14.2/dist/algoliasearch-lite.umd.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.46/dist/instantsearch.production.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
     <script>
       const { autocomplete, getAlgoliaResults } = window['@algolia/autocomplete-js'];
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-query-suggestions"></script>
-<script>
-  const { createQuerySuggestionsPlugin } = window[
-    '@algolia/autocomplete-plugin-query-suggestions'
-  ];
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-recent-searches"></script>
-<script>
-  const { createLocalStorageRecentSearchesPlugin } = window[
-    '@algolia/autocomplete-plugin-recent-searches'
-  ];
-</script>
+    <script>
+      const { createQuerySuggestionsPlugin } = window['@algolia/autocomplete-plugin-query-suggestions'];
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-recent-searches"></script>
+    <script>
+      const { createLocalStorageRecentSearchesPlugin } = window['@algolia/autocomplete-plugin-recent-searches'];
+    </script>
+    <script type="text/javascript">
+      const { history } = instantsearch.routers;
+      const { connectSearchBox } = instantsearch.connectors;
+    </script>
 
     <!-- Algolia Insights script -->
     <script>
       var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights@2.2.3/dist/search-insights.min.js";
-
       !function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){
       (e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],
       i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
       }(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
     </script>
 
-    <script type="text/javascript">
-      const { history } = instantsearch.routers;
-      const { connectSearchBox } = instantsearch.connectors;
-
-    </script>
+    
 
     <script type="text/javascript">
       // Get the customer data from the Colect backend
@@ -47,14 +40,8 @@
         const customerId = "mdsdsdsd2121"; //should be [[customer:email]]
     </script>
 
-    <link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-theme-classic"
-/>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-theme-classic"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"/>
 
 
 
@@ -85,30 +72,15 @@
 
       /* The Close Button */
       .close {
-        position: absolute;
-        right: 32px;
-        top: 32px;
-        width: 32px;
+        width: 17px;
         height: 32px;
         opacity: 0.3;
+        cursor: pointer;
       }
       .close:hover {
         opacity: 1;
       }
-      .close:before, .close:after {
-        position: absolute;
-        left: 15px;
-        content: ' ';
-        height: 33px;
-        width: 2px;
-        background-color: #333;
-      }
-      .close:before {
-        transform: rotate(45deg);
-      }
-      .close:after {
-        transform: rotate(-45deg);
-      }
+  
 
         /* product card design */
         .card {
@@ -144,7 +116,7 @@
           width: calc(20% - 1rem);
           border: 1px solid #c4c8d8;
           box-shadow: 0 2px 5px 0 #e3e5ec;
-      }
+        }
 
       mark {
         background-color: #e8033530;
@@ -152,34 +124,31 @@
 
      .ais-QueryRuleCustomData {
        max-height: 343px;
-    overflow: hidden;
-    /* width: 100%; */
-    margin-bottom: 1rem;
-     }
+      overflow: hidden;
+      /* width: 100%; */
+      margin-bottom: 1rem;
+      }
 
     .ais-QueryRuleCustomData img {
     width: 100%;
     } 
 
-
     /* SIDE BAR CSS */
     .with-sidebar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s1);
-}
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s1);
+    }
 
-.with-sidebar > :first-child {
-  flex-grow: 1;
-}
+    .with-sidebar > :first-child {
+      flex-grow: 1;
+    }
 
-.with-sidebar > :last-child {
-  flex-basis: 0;
-  flex-grow: 999;
-  min-inline-size: 50%;
-}
-  
-
+    .with-sidebar > :last-child {
+      flex-basis: 0;
+      flex-grow: 999;
+      min-inline-size: 50%;
+    }
 
    </style> 
 
@@ -220,8 +189,11 @@
 
   <!-- Modal content -->
   <div class="modal-content">
-    <div class="close"></div>
-    <br>
+    <div style="display: flex; justify-content: flex-end">
+  <div class="close">&#x2715 </div>
+</div>
+
+
 
 <div id="searchbox"></div>
 <br>
@@ -350,17 +322,13 @@
         instantsearch.widgets.clearRefinements({
           container: '#clear-refinements',
         }),
-
-
-
-
       ]);
 
+      //setup algolia insights
       search.use(instantsearch.middlewares.createInsightsMiddleware({
         insightsClient: window.aa,
       }));
       window.aa('setUserToken', customerId);
-
 
       search.start();
 
@@ -436,10 +404,6 @@
       });
 
 
-
-
-
-
     </script>
 
     <script type="text/javascript">
@@ -457,32 +421,32 @@
 
 
       // Get the modal
-var modal = document.getElementById("myModal");
+      var modal = document.getElementById("myModal");
 
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+      // Get the button that opens the modal
+      var btn = document.getElementById("myBtn");
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
 
-// When the user clicks on the button, open the modal
-btn.onclick = function() {
-  modal.style.display = "block";
-}
+      // When the user clicks on the button, open the modal
+      btn.onclick = function() {
+        modal.style.display = "block";
+      }
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+        modal.style.display = "none";
 
 
-}
+      }
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
     </script>
 
 
