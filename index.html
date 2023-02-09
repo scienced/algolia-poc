@@ -24,7 +24,7 @@
   ];
 </script>
 
-
+    <!-- Algolia Insights script -->
     <script>
       var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights@2.2.3/dist/search-insights.min.js";
 
@@ -38,6 +38,13 @@
       const { history } = instantsearch.routers;
       const { connectSearchBox } = instantsearch.connectors;
 
+    </script>
+
+    <script type="text/javascript">
+      // Get the customer data from the Colect backend
+        const customerCollection = "PL_TriumphTEST"; //should become [[customer:ccBrandId]]
+        const customerLanguage = "[[customer:language]]";
+        const customerId = "mdsdsdsd2121"; //should be [[customer:email]]
     </script>
 
     <link
@@ -265,12 +272,13 @@
 
     <script type="text/javascript">
       const searchClient = algoliasearch('E8HZJUFDQU', '2eab4588c570c21e4ef0e93c7483c45a');
-      
-      const INSTANT_SEARCH_INDEX_NAME = 'PL_TriumphTEST';
+      const INSTANT_SEARCH_INDEX_NAME = customerCollection;
+
+
       const instantSearchRouter = history();
 
       const search = instantsearch({
-        indexName: 'PL_TriumphTEST',
+        indexName: INSTANT_SEARCH_INDEX_NAME,
         searchClient,
         routing: true,
       });
@@ -286,6 +294,7 @@
   
         }),
 
+      //layout of banner
         instantsearch.widgets.queryRuleCustomData({
           container: '#banner',
           templates: {
@@ -299,34 +308,24 @@
           },
         }),
 
-
-
-
-
-
+      //layout of products
         instantsearch.widgets.hits({
           container: '#hits',
           templates: {
           item: (hit, bindEvent) =>  `
             <a href="${hit.link}" ${bindEvent('click', hit, 'pdp clicked')}>
             <div class="card">
-              <img src="${hit.image_link}" style="max-width: 100%; max-height: 300px">
-          
-             <h1>${hit._highlightResult.title.value}</h1>
-              
+             <img src="${hit.image_link}" style="max-width: 100%; max-height: 300px">
+             <h1>${hit._highlightResult.title.value}</h1>            
               <p class="price">${hit.objectID} - ${hit.colorCode}</p>
               <p class="price">WSP: ${hit.currencyCode} ${hit.wholesalePrice} - RSP: ${hit.currencyCode} ${hit.retailPrice}</p>
-             
-              
-
-   
-
             </div>
             </a>
           `,
         },
         }),
 
+        //Setup of facets
          instantsearch.widgets.refinementList({
           container: '#status-list',
           attribute: 'status',
@@ -360,7 +359,7 @@
       search.use(instantsearch.middlewares.createInsightsMiddleware({
         insightsClient: window.aa,
       }));
-      window.aa('setUserToken', 'my-user-token');
+      window.aa('setUserToken', customerId);
 
 
       search.start();
@@ -391,7 +390,7 @@
 
        const querySuggestionsPlugin = createQuerySuggestionsPlugin({
         searchClient,
-        indexName: 'PL_TriumphTEST_query_suggestions',
+        indexName: INSTANT_SEARCH_INDEX_NAME+'_query_suggestions',
         getSearchParams({ state }) {
          return { hitsPerPage: state.query ? 5 : 5 };
         },
@@ -419,8 +418,11 @@
           setInstantSearchUiState({ query: '' });
         },
         onStateChange({ prevState, state }) {
+
           if (!skipInstantSearchUiStateUpdate && prevState.query !== state.query) {
             setInstantSearchUiState({ query: state.query });
+            //clear all refinements when the search query changes
+            search.helper.clearRefinements().search();
           }
           skipInstantSearchUiStateUpdate = false;
         },
@@ -447,7 +449,7 @@
       function checkparas() {
         const queryString = window.location.search
         const urlParams = new URLSearchParams(queryString)
-        const searchState = urlParams.has('PL_TriumphTEST[query]')
+        const searchState = urlParams.has(customerCollection+'[query]')
         if (searchState) {
          modal.style.display = "block";
         }
