@@ -3,6 +3,8 @@
   <head>
     <title>Algolia Search - Colect POC</title>
 
+    <!-- Author: michiel@acolect.io 2023 -->
+
     <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.14.2/dist/algoliasearch-lite.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.46/dist/instantsearch.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
@@ -31,10 +33,9 @@
       }(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
     </script>
 
-    
-
+    <!-- Variables setup -->
     <script type="text/javascript">
-      // Get the customer data from the Colect backend
+      // Setup the variables and get the customer data from the Colect backend
         const customerCollection = "PL_TriumphTEST"; //should become [[customer:ccBrandId]]
         const customerLanguage = "[[customer:language]]";
         const customerId = "mdsdsdsd2121"; //should be [[customer:email]]
@@ -81,7 +82,6 @@
         opacity: 1;
       }
   
-
         /* product card design */
         .card {
           max-width: 300px;
@@ -150,6 +150,31 @@
       min-inline-size: 50%;
     }
 
+.btn-cta, .select-cta {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    vertical-align: top;
+    min-height: 2.5rem;
+    padding: 0 30px;
+    border: 1px solid #e5e5e5;
+    border-radius: 27px;
+    background-color: #fff;
+    color: #292929;
+    fill: #292929;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+        margin-right: 10px;
+            margin-bottom: 10px;
+          }
+    .btn-cta:not(:disabled):hover, a:hover .btn-cta:not(:disabled) {
+    background-color: #292929;
+    border-color: #545454;
+    color: #fff!important;
+    fill: #fff;
+    }
+
    </style> 
 
   </head>
@@ -164,7 +189,7 @@
       <li>Routing (good back from PDP experience)</li>
       <li>Facets</li>
       <li>Full size modal</li>
-      <li>Banner support, see: <a href="?PL_TriumphTEST%5Bquery%5D=amour">example</a></li>
+      <li>Banner support, see: <a href="?PL_TriumphTEST%5Bquery%5D=amourette">example</a></li>
       <li>Suggestions via autocomplete.js libary</li>
       <li>Historic searches via autocomplete.js libary</li>
 
@@ -172,14 +197,12 @@
 
     Pending features:
     <ul>
-      <li>No results screen (pending)</li>
-      <li>Facets show more</li>
-      <li>Clean up code</li>
+      <li>No results screen: add top searches + WP CMS</li>
+      <li>Remove empty facets</li>
     </ul>
-
-
-
      </ul> 
+
+    Version 0.81 - <a href="index.html" download="search">Download code</a>
  
   </body>
 
@@ -194,20 +217,17 @@
 </div>
 
 
-
 <div id="searchbox"></div>
 <br>
  <div id="autocomplete" style="    max-width: 650px;
     margin: auto; margin-bottom: 1rem;"></div>
 
 
-
 <div class="with-sidebar">
-  <div><!-- sidebar -->
-
-     <div id="stats"></div>
-     <h3>Product Line</h3>
-        <div id="categories-list"></div>
+  <div class="hide-when-no-result"><!-- sidebar -->
+         <div id="stats"></div>
+         <h3>Product Line</h3>
+         <div id="categories-list"></div>
 
          <h3>Series</h3>
         <div id="series-list"></div>
@@ -223,24 +243,16 @@
 
         <br>
         <div id="clear-refinements"></div>
-      </div>
-    <div><!-- non-sidebar -->
-       <div id="banner"></div>
-    <div id="hits"></div>
-    </div>
   </div>
-     
-     
-     
-
-   
+  <div><!-- non-sidebar -->
+        <div id="banner"></div>
+        <div id="hits"></div>
+  </div>
+  </div>
 
   </div>
 
 </div>
-
-
-
 
     <script type="text/javascript">
       const searchClient = algoliasearch('E8HZJUFDQU', '2eab4588c570c21e4ef0e93c7483c45a');
@@ -256,7 +268,6 @@
       });
 
       const virtualSearchBox = connectSearchBox(() => {});
-
 
       search.addWidgets([
         virtualSearchBox({}),
@@ -294,6 +305,29 @@
             </div>
             </a>
           `,
+          empty: `<div>We are sorry but there are no results for your search <strong>"{{ query }}"</strong></div>
+          <br>
+          <div class="js-no-result-search-suggestion">
+            <div class="offset-1 flex--col">
+                <div class="flex--col ">
+                    <h2>Suggestions</h2>
+                </div>
+                <button class="flex flex--coll">
+                    <a href="?PL_TriumphTEST%5Bquery%5D=amourette">Amourette</a>
+                </button>
+                 <button class="flex flex--coll">
+                    <a href="?PL_TriumphTEST%5Bquery%5D=signature%20sheer">Signature Sheer</a>
+                </button>
+                 <button class="flex flex--coll">
+                    <a href="?PL_TriumphTEST%5Bquery%5D=lift%20smart">Lift Smart</a>
+                </button>
+         
+
+               
+            </div>
+        </div>
+
+          `
         },
         }),
 
@@ -313,10 +347,13 @@
         instantsearch.widgets.refinementList({
           container: '#series-list',
           attribute: 'userDefinedField2',
+          showMore: true,
+          showMoreLimit: 50,
         }),
          instantsearch.widgets.refinementList({
           container: '#color-list',
           attribute: 'simpleColor',
+          showMore: true,
         }),
 
         instantsearch.widgets.clearRefinements({
@@ -330,7 +367,11 @@
       }));
       window.aa('setUserToken', customerId);
 
+     
+
+
       search.start();
+
 
       // Set the InstantSearch index UI state from external events.
       function setInstantSearchUiState(indexUiState) {
@@ -391,6 +432,7 @@
             setInstantSearchUiState({ query: state.query });
             //clear all refinements when the search query changes
             search.helper.clearRefinements().search();
+            console.log(search.helper.state.query)
           }
           skipInstantSearchUiStateUpdate = false;
         },
@@ -408,7 +450,6 @@
 
     <script type="text/javascript">
 
-
       // Check if router has search query parameter, if so open model
       function checkparas() {
         const queryString = window.location.search
@@ -418,7 +459,6 @@
          modal.style.display = "block";
         }
       } 
-
 
       // Get the modal
       var modal = document.getElementById("myModal");
@@ -437,8 +477,6 @@
       // When the user clicks on <span> (x), close the modal
       span.onclick = function() {
         modal.style.display = "none";
-
-
       }
 
       // When the user clicks anywhere outside of the modal, close it
@@ -448,6 +486,5 @@
         }
       }
     </script>
-
 
 </html>
