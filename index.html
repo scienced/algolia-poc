@@ -36,9 +36,9 @@
     <!-- Variables setup -->
     <script type="text/javascript">
       // Setup the variables and get the customer data from the Colect backend
-        const customerCollection = "PL_TriumphTEST"; //should become [[customer:ccBrandId]]
-        const customerLanguage = "[[customer:language]]";
-        const customerId = "mdsdsdsd2121"; //should be [[customer:email]]
+        const customerCollection = "PL_TriumphTEST"; //should become [[customer:ccBrandId]] 
+        const customerLanguage = "EN"; //should become[[customer:language]], currently not used yet
+        const customerId = "434783"; //used for insights, I don't know if there is a colect backend variable for this?
     </script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-theme-classic"/>
@@ -181,9 +181,10 @@
   <body onload="checkparas()">
     <button id="myBtn">Open search modal</button>
 
-    <p>1. The search modal is based on the <strong>instantsearch.js</strong>  and <strong>autocomplete.js</strong> library</p>
+     <p><strong>Version 0.82</strong> - <a href="index.html" download="search">Download code</a></p>
 
-    This search currently supports:
+
+    Currently supports:
     <ul>
       <li>Algolia Insights, sending view/click and conversion events</li>
       <li>Routing (good back from PDP experience)</li>
@@ -202,7 +203,7 @@
     </ul>
      </ul> 
 
-    Version 0.81 - <a href="index.html" download="search">Download code</a>
+   
  
   </body>
 
