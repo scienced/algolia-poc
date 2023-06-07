@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Algolia - POC</title>
+
+    <!-- Author: michiel@acolect.io 2023 -->
+
+    <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.14.2/dist/algoliasearch.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.46/dist/instantsearch.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
+    <script>
+      const { autocomplete, getAlgoliaResults } = window['@algolia/autocomplete-js'];
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-query-suggestions"></script>
+    <script>
+      const { createQuerySuggestionsPlugin } = window['@algolia/autocomplete-plugin-query-suggestions'];
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-recent-searches"></script>
+    <script>
+      const { createLocalStorageRecentSearchesPlugin } = window['@algolia/autocomplete-plugin-recent-searches'];
+    </script>
+    <script type="text/javascript">
+      const { history } = instantsearch.routers;
+      const { connectSearchBox } = instantsearch.connectors;
+    </script>
+
+    <!-- Algolia Insights script -->
+    <script>
+      var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights@2.2.3/dist/search-insights.min.js";
+      !function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){
+      (e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],
+      i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
+      }(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
+    </script>
+
+    <!-- Variables setup -->
+    <script type="text/javascript">
+        const options = {
+          searchFieldId: "t-searchquery",
+          customerCollection: "PL_TriumphTEST",
+          customerLanguage: "EN",
+          customerId: "434783",
+          algoliaApplicationId: "E8HZJUFDQU",
+          algoliaApiKey: "2eab4588c570c21e4ef0e93c7483c45a"
+        }
+    </script>
+    <link rel="stylesheet" href="./algolia-colect-middelware.css"/>
+  </head>
+
+
+  <body>
+
+    <div id="container">
+
+      <input type="text" name="q" value="" class="w3-input w3-border a4f-searchquery ui-autocomplete-input" id="t-searchquery" autocomplete="off" placeholder="search">
+     <p><strong>Version 0.85</strong></p>
+    Pending features:
+    <ul>      
+      <li>external files JS -> Vite</li>
+      <li>error catching if collection is not available & don't trigger modal if index does not excist</li>
+      <li>Github, jsdelivr, manual</li>
+      <li>fix css issue</li>
+     </ul> 
+    </div>
+
+    <script type="module">
+        import * as lib from './lib.js';
+        lib.searchSetup()  
+    </script>
+
+  </body>
+</html>

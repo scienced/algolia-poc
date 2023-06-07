@@ -1,491 +1,68 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Algolia Search - Colect POC</title>
-
-    <!-- Author: michiel@acolect.io 2023 -->
-
-    <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.14.2/dist/algoliasearch-lite.umd.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.46/dist/instantsearch.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
-    <script>
-      const { autocomplete, getAlgoliaResults } = window['@algolia/autocomplete-js'];
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-query-suggestions"></script>
-    <script>
-      const { createQuerySuggestionsPlugin } = window['@algolia/autocomplete-plugin-query-suggestions'];
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-recent-searches"></script>
-    <script>
-      const { createLocalStorageRecentSearchesPlugin } = window['@algolia/autocomplete-plugin-recent-searches'];
-    </script>
-    <script type="text/javascript">
-      const { history } = instantsearch.routers;
-      const { connectSearchBox } = instantsearch.connectors;
-    </script>
-
-    <!-- Algolia Insights script -->
-    <script>
-      var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights@2.2.3/dist/search-insights.min.js";
-      !function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){
-      (e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],
-      i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
-      }(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
-    </script>
-
-    <!-- Variables setup -->
-    <script type="text/javascript">
-      // Setup the variables and get the customer data from the Colect backend
-        const customerCollection = "PL_TriumphTEST"; //should become [[customer:ccBrandId]] 
-        const customerLanguage = "EN"; //should become[[customer:language]], currently not used yet
-        const customerId = "434783"; //used for insights, I don't know if there is a colect backend variable for this?
-    </script>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-theme-classic"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"/>
-
-
-
-   <style type="text/css">
-     /* The Modal (background) */
-      .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        /* z-index: 1; */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-      }
-
-      /* Modal Content/Box */
-      .modal-content {
-        background-color: #fefefe;
-        margin: 30px auto; /* 15% from the top and centered */
-        padding: 20px;
-        border: 1px solid #888;
-        border-radius: 10px;
-        width: 93%; /* Could be more or less, depending on screen size */
-      }
-
-      /* The Close Button */
-      .close {
-        width: 17px;
-        height: 32px;
-        opacity: 0.3;
-        cursor: pointer;
-      }
-      .close:hover {
-        opacity: 1;
-      }
-  
-        /* product card design */
-        .card {
-          max-width: 300px;
-          margin: auto;
-          text-align: center;
-          font-family: arial;
-        }
-
-        .price  {
-          color: grey;
-          font-weight: 100;
-            font-size: 12px;
-        }
-
-        a {
-          text-decoration: none;
-        }
-
-        h1 {
-          font-weight: 600;
-            font-size: 16px;
-            line-height: 1.5;
-            margin: 0;
-            color: black;
-        }
-
-        /* override some algolia css */
-        .ais-Hits-item, .ais-InfiniteHits-item, .ais-InfiniteResults-item, .ais-Results-item {
-          margin-top: 1rem;
-          margin-left: 1rem;
-          padding: 1rem;
-          width: calc(20% - 1rem);
-          border: 1px solid #c4c8d8;
-          box-shadow: 0 2px 5px 0 #e3e5ec;
-        }
-
-      mark {
-        background-color: #e8033530;
-      }
-
-     .ais-QueryRuleCustomData {
-       max-height: 343px;
-      overflow: hidden;
-      /* width: 100%; */
-      margin-bottom: 1rem;
-      }
-
-    .ais-QueryRuleCustomData img {
-    width: 100%;
-    } 
-
-    /* SIDE BAR CSS */
-    .with-sidebar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--s1);
-    }
-
-    .with-sidebar > :first-child {
-      flex-grow: 1;
-    }
-
-    .with-sidebar > :last-child {
-      flex-basis: 0;
-      flex-grow: 999;
-      min-inline-size: 50%;
-    }
-
-.btn-cta, .select-cta {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    vertical-align: top;
-    min-height: 2.5rem;
-    padding: 0 30px;
-    border: 1px solid #e5e5e5;
-    border-radius: 27px;
-    background-color: #fff;
-    color: #292929;
-    fill: #292929;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all .3s ease-in-out;
-        margin-right: 10px;
-            margin-bottom: 10px;
-          }
-    .btn-cta:not(:disabled):hover, a:hover .btn-cta:not(:disabled) {
-    background-color: #292929;
-    border-color: #545454;
-    color: #fff!important;
-    fill: #fff;
-    }
-
-   </style> 
-
-  </head>
-  <body onload="checkparas()">
-    <button id="myBtn">Open search modal</button>
-
-     <p><strong>Version 0.82</strong> - <a href="index.html" download="search">Download code</a></p>
-
-
-    Currently supports:
-    <ul>
-      <li>Algolia Insights, sending view/click and conversion events</li>
-      <li>Routing (good back from PDP experience)</li>
-      <li>Facets</li>
-      <li>Full size modal</li>
-      <li>Banner support, see: <a href="?PL_TriumphTEST%5Bquery%5D=amourette">example</a></li>
-      <li>Suggestions via autocomplete.js libary</li>
-      <li>Historic searches via autocomplete.js libary</li>
-
-    </ul>
-
-    Pending features:
-    <ul>
-      <li>No results screen: add top searches + WP CMS</li>
-      <li>Remove empty facets</li>
-    </ul>
-     </ul> 
-
-   
- 
-  </body>
-
-
-<!-- The Modal -->
-<div id="myModal" class="modal">
-
-  <!-- Modal content -->
-  <div class="modal-content">
-    <div style="display: flex; justify-content: flex-end">
-  <div class="close">&#x2715 </div>
-</div>
-
-
-<div id="searchbox"></div>
-<br>
- <div id="autocomplete" style="    max-width: 650px;
-    margin: auto; margin-bottom: 1rem;"></div>
-
-
-<div class="with-sidebar">
-  <div class="hide-when-no-result"><!-- sidebar -->
-         <div id="stats"></div>
-         <h3>Product Line</h3>
-         <div id="categories-list"></div>
-
-         <h3>Series</h3>
-        <div id="series-list"></div>
-
-        <h3>Status</h3>
-        <div id="status-list"></div>
-
-        <h3>Lifecycle</h3>
-        <div id="lifecycle-list"></div>
-
-        <h3>Color</h3>
-        <div id="color-list"></div>
-
-        <br>
-        <div id="clear-refinements"></div>
-  </div>
-  <div><!-- non-sidebar -->
-        <div id="banner"></div>
-        <div id="hits"></div>
-  </div>
-  </div>
-
-  </div>
-
-</div>
-
-    <script type="text/javascript">
-      const searchClient = algoliasearch('E8HZJUFDQU', '2eab4588c570c21e4ef0e93c7483c45a');
-      const INSTANT_SEARCH_INDEX_NAME = customerCollection;
-
-
-      const instantSearchRouter = history();
-
-      const search = instantsearch({
-        indexName: INSTANT_SEARCH_INDEX_NAME,
-        searchClient,
-        routing: true,
-      });
-
-      const virtualSearchBox = connectSearchBox(() => {});
-
-      search.addWidgets([
-        virtualSearchBox({}),
-
-        instantsearch.widgets.stats({
-          container: '#stats',
-  
-        }),
-
-      //layout of banner
-        instantsearch.widgets.queryRuleCustomData({
-          container: '#banner',
-          templates: {
-            default: `
-              {{#items}}
-                <a href="{{link}}">
-                <img src={{banner_image}} />
-                </a>
-              {{/items}}
-            `,
-          },
-        }),
-
-      //layout of products
-        instantsearch.widgets.hits({
-          container: '#hits',
-          templates: {
-          item: (hit, bindEvent) =>  `
-            <a href="${hit.link}" ${bindEvent('click', hit, 'pdp clicked')}>
-            <div class="card">
-             <img src="${hit.image_link}" style="max-width: 100%; max-height: 300px">
-             <h1>${hit._highlightResult.title.value}</h1>            
-              <p class="price">${hit.objectID} - ${hit.colorCode}</p>
-              <p class="price">WSP: ${hit.currencyCode} ${hit.wholesalePrice} - RSP: ${hit.currencyCode} ${hit.retailPrice}</p>
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Algolia-Colect-frontend-middleware</title>
+   </head>
+   <body>
+      Original Colect V2 search field:
+      <a class="search_button hide-lg-down nav--link nav-bar reset-scroll">
+         <!-- START-CONTENTBLOCK:search -->
+         <form id="_sf_158965797" class="w3-container a4f-form a4f-searchform" method="GET" action="/webstore/v2/search">
+            <div class="a4f-searchquery-container2">
+               <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input type="text" name="q" value="" class="w3-input w3-border a4f-searchquery ui-autocomplete-input" autocomplete="off" placeholder="search">
             </div>
-            </a>
-          `,
-          empty: `<div>We are sorry but there are no results for your search <strong>"{{ query }}"</strong></div>
-          <br>
-          <div class="js-no-result-search-suggestion">
-            <div class="offset-1 flex--col">
-                <div class="flex--col ">
-                    <h2>Suggestions</h2>
-                </div>
-                <button class="flex flex--coll">
-                    <a href="?PL_TriumphTEST%5Bquery%5D=amourette">Amourette</a>
-                </button>
-                 <button class="flex flex--coll">
-                    <a href="?PL_TriumphTEST%5Bquery%5D=signature%20sheer">Signature Sheer</a>
-                </button>
-                 <button class="flex flex--coll">
-                    <a href="?PL_TriumphTEST%5Bquery%5D=lift%20smart">Lift Smart</a>
-                </button>
-         
-
-               
+            <div class="a4f-searchbutton-container">
+               <button class="a4f-googlematerial a4f-searchbutton" type="submit" style="display: none;"></button>
             </div>
-        </div>
+         </form>
+      </a>
+      <br>
+      <ul>
+      <li><a href="./?location=DE_sloggiPROD">DE_sloggiPROD</a></li>
+      <li><a href="./?location=DE_TriumphPROD">DE_TriumphPROD</a></li>
+      <li><a href="./?location=AT_TriumphPROD">AT_TriumphPROD</a></li>
+      <li><a href="./?location=AT_sloggiPROD">AT_sloggiPROD</a></li>
+      <li><a href="./?location=IT_sloggiPROD">IT_sloggiPROD</a></li>
+      <li><a href="./?location=IT_TriumphPROD">IT_TriumphPROD</a></li>
+      <li><a href="./?location=BE_sloggiPROD">BE_sloggiPROD</a></li>
+      <li><a href="./?location=BE_TriumphPROD">BE_TriumphPROD</a></li>
+      <li><a href="./?location=BE_sloggiPROD">BE_sloggiPROD</a></li>
+     <li><a href="./?location=HU_TriumphPROD">HU_TriumphPROD</a></li>
+      <li><a href="./?location=HU_sloggiPROD">HU_sloggiPROD</a></li>
+   </ul>
 
-          `
-        },
-        }),
-
-        //Setup of facets
-         instantsearch.widgets.refinementList({
-          container: '#status-list',
-          attribute: 'status',
-        }),
-        instantsearch.widgets.refinementList({
-          container: '#lifecycle-list',
-          attribute: 'productGroupCode',
-        }),
-        instantsearch.widgets.refinementList({
-          container: '#categories-list',
-          attribute: 'categories',
-        }),
-        instantsearch.widgets.refinementList({
-          container: '#series-list',
-          attribute: 'userDefinedField2',
-          showMore: true,
-          showMoreLimit: 50,
-        }),
-         instantsearch.widgets.refinementList({
-          container: '#color-list',
-          attribute: 'simpleColor',
-          showMore: true,
-        }),
-
-        instantsearch.widgets.clearRefinements({
-          container: '#clear-refinements',
-        }),
-      ]);
-
-      //setup algolia insights
-      search.use(instantsearch.middlewares.createInsightsMiddleware({
-        insightsClient: window.aa,
-      }));
-      window.aa('setUserToken', customerId);
-
-     
+      <hr>
+      <p><strong>Algolia-Colect-middleware-js </strong>Version LATEST</p>
+      Pending features:
+      <ul>
+         <h3>Basics</h3>
+         <li>External "no results"</li>
+         <li>Auto popup with url parameters</li>
+         <li>Add fixed Algolia links (low prio)</li>
+      </ul>
+      </div>
 
 
-      search.start();
+<script type="module" crossorigin src="https://jsdelivr.com/gh/scienced/algolia-colect-middleware-js@latest/dist/assets/index.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/scienced/algolia-colect-middleware-js@latest/dist/assets/style.css">
 
+        <script>
 
-      // Set the InstantSearch index UI state from external events.
-      function setInstantSearchUiState(indexUiState) {
-        search.setUiState(uiState => ({
-          ...uiState,
-          [INSTANT_SEARCH_INDEX_NAME]: {
-            ...uiState[INSTANT_SEARCH_INDEX_NAME],
-            // We reset the page when the search state changes.
-            page: 1,
-            ...indexUiState,
-          },
-        }));
-      }
+         const PAGELOCATION = new URLSearchParams(window.location.search).get('location')
+          const CUSTOMERLANGUAGE = new URLSearchParams(window.location.search).get('locale')
 
-      // Return the InstantSearch index UI state.
-      function getInstantSearchUiState() {
-        const uiState = instantSearchRouter.read();
+         var options = {
+          customerCollection: `${PAGELOCATION}`,
+          customerLanguage: "EN",
+          customerId: "434783",
+          algoliaApplicationId: "0DFGSLJWH6",
+          algoliaApiKey: "8f7de09f5e2429d62da6af80c4f60078",
+          container: ".search_button"
+         }
+         window.options = options;
+      </script>
 
-        return (uiState && uiState[INSTANT_SEARCH_INDEX_NAME]) || {};
-      }
-
-      const searchPageState = getInstantSearchUiState();
-
-      let skipInstantSearchUiStateUpdate = false;
-
-       const querySuggestionsPlugin = createQuerySuggestionsPlugin({
-        searchClient,
-        indexName: INSTANT_SEARCH_INDEX_NAME+'_query_suggestions',
-        getSearchParams({ state }) {
-         return { hitsPerPage: state.query ? 5 : 5 };
-        },
-      });
-
-      const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
-        key: 'RECENT_SEARCH',
-        limit: 5,
-      });
-
-
-      const { setQuery } = autocomplete({
-        container: '#autocomplete',
-        placeholder: 'Search for products',
-        plugins: [querySuggestionsPlugin, recentSearchesPlugin],
-        openOnFocus: true,
-        detachedMediaQuery: 'none',
-        initialState: {
-          query: searchPageState.query || '',
-        },
-        onSubmit({ state }) {
-          setInstantSearchUiState({ query: state.query });
-        },
-        onReset() {
-          setInstantSearchUiState({ query: '' });
-        },
-        onStateChange({ prevState, state }) {
-
-          if (!skipInstantSearchUiStateUpdate && prevState.query !== state.query) {
-            setInstantSearchUiState({ query: state.query });
-            //clear all refinements when the search query changes
-            search.helper.clearRefinements().search();
-            console.log(search.helper.state.query)
-          }
-          skipInstantSearchUiStateUpdate = false;
-        },
-      })
-
-      // This keeps Autocomplete aware of state changes coming from routing
-      // and updates its query accordingly
-      window.addEventListener('popstate', () => {
-        skipInstantSearchUiStateUpdate = true;
-        setQuery(search.helper?.state.query || '');
-      });
-
-
-    </script>
-
-    <script type="text/javascript">
-
-      // Check if router has search query parameter, if so open model
-      function checkparas() {
-        const queryString = window.location.search
-        const urlParams = new URLSearchParams(queryString)
-        const searchState = urlParams.has(customerCollection+'[query]')
-        if (searchState) {
-         modal.style.display = "block";
-        }
-      } 
-
-      // Get the modal
-      var modal = document.getElementById("myModal");
-
-      // Get the button that opens the modal
-      var btn = document.getElementById("myBtn");
-
-      // Get the <span> element that closes the modal
-      var span = document.getElementsByClassName("close")[0];
-
-      // When the user clicks on the button, open the modal
-      btn.onclick = function() {
-        modal.style.display = "block";
-      }
-
-      // When the user clicks on <span> (x), close the modal
-      span.onclick = function() {
-        modal.style.display = "none";
-      }
-
-      // When the user clicks anywhere outside of the modal, close it
-      window.onclick = function(event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
-      }
-    </script>
-
+   </body>
 </html>
